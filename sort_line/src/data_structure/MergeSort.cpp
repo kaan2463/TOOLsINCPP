@@ -8,20 +8,16 @@
 #include "MergeSort.h"
 
 #include <iostream>
-
-MergeSort::MergeSort() {
-}
-//FIXME: now, just for the integers
+//FIXME: better approach to avoid memory problem
 template<typename T>
-T* MergeSort::merge(T *arr1, T *arr2, int sz1, int sz2) {
-	int *temp = new int[sz1 + sz2];
+T* MergeSort::merge(T *arr1, T *arr2, int sz1, int sz2,
+		int (*comparator)(T, T)) {
+	T *temp = new T[sz1 + sz2];
 
 	//indexes
 	int ind_1 = 0, ind_2 = 0;
 
 	for (int i = 0; i < sz1 + sz2; i++) {
-
-		//FIXME: For now it is just sorting by ascending
 
 		if (ind_1 >= sz1) {
 			temp[i] = arr2[ind_2];
@@ -34,7 +30,10 @@ T* MergeSort::merge(T *arr1, T *arr2, int sz1, int sz2) {
 			continue;
 		}
 
-		if (arr1[ind_1] < arr2[ind_2]) {
+		T first_arg = arr1[ind_1];
+		T second_arg = arr2[ind_2];
+
+		if (comparator(first_arg, second_arg) > 0) {
 			temp[i] = arr1[ind_1];
 			ind_1++;
 		} else {
@@ -46,11 +45,19 @@ T* MergeSort::merge(T *arr1, T *arr2, int sz1, int sz2) {
 	return temp;
 }
 
-MergeSort::~MergeSort() {
+template<typename T>
+int default_comparator(T first_arg, T second_arg) {
+	if (first_arg < second_arg) {
+		return -1;
+	} else if (first_arg == second_arg) {
+		return 0;
+	} else {
+		return 1;
+	}
 }
 
 template<typename T>
-T* MergeSort::sort(T *array, int sz) {
+T* MergeSort::sort(T *array, int sz, int (*comparator)(T, T)) {
 
 	if (sz == 1) {
 		return array;
@@ -60,7 +67,8 @@ T* MergeSort::sort(T *array, int sz) {
 		return new T[0];
 	}
 
-	int *arr1, *arr2, sz1 = 0, sz2 = 0;
+	T *arr1, *arr2;
+	int sz1 = 0, sz2 = 0;
 	sz1 = sz / 2;
 	sz2 = sz - sz1;
 	arr1 = new T[sz1];
@@ -73,9 +81,8 @@ T* MergeSort::sort(T *array, int sz) {
 		arr2[i] = array[i + sz1];
 	}
 
-	return merge(sort(arr1, sz1), sort(arr2, sz2), sz1, sz2);
+	//FIXME:repetetive comparator
+	return merge(sort(arr1, sz1, comparator), sort(arr2, sz2, comparator), sz1,
+			sz2, comparator);
 }
 
-int* MergeSort::sortInt(int *array, int int1) {
-	return MergeSort::sort(array, int1);
-}

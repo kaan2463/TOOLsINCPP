@@ -11,13 +11,10 @@
 class MergeSort {
 private:
 	template<class T>
-	static T* merge(T*, T*, int, int);
+	static T* merge(T*, T*, int, int, int (*comparator)(T, T));
 public:
-	MergeSort();
 	template<class T>
-	static T* sort(T*, int);
-	static int* sortInt(int*, int);
-	virtual ~MergeSort();
+	static T* sort(T*, int, int (*comparator)(T, T));
 };
 
 #endif /* DATA_STRUCTURE_MERGESORT_H_ */

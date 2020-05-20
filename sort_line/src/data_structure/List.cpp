@@ -8,33 +8,38 @@
 #include <algorithm>
 #include <iterator>
 #include "List.h"
-#include "MergeSort.h"
+//FIXME: error when include '.h'
+#include "MergeSort.cpp"
 
-List::List() {
-	array = new int[SIZE_STEP];
+template<class T>
+List<T>::List() {
+	array = new T[SIZE_STEP];
 	capacity = SIZE_STEP;
 	sz = 0;
 }
 
-List::~List() {
+template<class T>
+List<T>::~List() {
 	delete array;
 }
 
-int List::get(int index) {
+template<class T>
+T List<T>::get(int index) {
 	if (index < sz) {
 		return array[index];
 	}
 	throw "IndexNotInBoundException";
 }
 
-void List::add(int item) {
+template<class T>
+void List<T>::add(T item) {
 	if (sz < capacity) {
 		array[sz] = item;
 		sz++;
 		return;
 	}
 
-	int *temp = new int[capacity + SIZE_STEP];
+	T *temp = new T[capacity + SIZE_STEP];
 	std::copy(array, array + capacity, temp);
 	delete[] array;
 	array = temp;
@@ -42,11 +47,21 @@ void List::add(int item) {
 	add(item);
 }
 
-int List::size() {
+template<class T>
+int List<T>::size() {
 	return sz;
 }
-void List::sort() {
-	int *temp = MergeSort::sortInt(array, sz);
+
+template<class T>
+void List<T>::sort() {
+	T *temp = MergeSort::sort<T>(array, sz, &default_comparator);
+	delete[] array;
+	array = temp;
+}
+
+template<class T>
+void List<T>::sort(int (*comparator)(T, T)) {
+	T *temp = MergeSort::sort<T>(array, sz, comparator);
 	delete[] array;
 	array = temp;
 }

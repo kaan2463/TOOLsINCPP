@@ -10,17 +10,19 @@
 
 #define SIZE_STEP 10
 
+template<class T>
 class List {
 private:
-	int *array;
+	T *array;
 	int sz;
 	int capacity;
 public:
 	List();
-	void add(int item);
-	int get(int index);
+	void add(T item);
+	T get(int index);
 	int size();
 	void sort();
+	void sort(int (*comparator)(T, T));
 	virtual ~List();
 };
 

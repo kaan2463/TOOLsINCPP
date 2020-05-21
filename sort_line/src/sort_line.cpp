@@ -7,54 +7,67 @@
 //============================================================================
 
 #include <iostream>
+#include <algorithm>
+#include <iterator>
+#include <string>
 #include <string.h>
 #include "data_structure/List.cpp"
 using namespace std;
 
-int compare_character_array(const char *s1, const char *s2) {
+int compare_character_array(const char *s1, const char *s2, bool ascending) {
 	for (;; s1++, s2++) {
 		int d = tolower((unsigned char) *s1) - tolower((unsigned char) *s2);
 		if (d != 0 || !*s1)
-			return d;
+			return ascending ? (-1) * d : d;
 	}
 	throw "UnsatisfiedReturn";
 }
 
-int character_array_comparator(char *first_arg, char *second_arg) {
-	return compare_character_array(first_arg, second_arg);
+int character_array_comparator_asc(char *first_arg, char *second_arg) {
+	return compare_character_array(first_arg, second_arg, true);
 }
 
-int main() {
-	List<char*> list;
-	list.add("123");
-	list.add("ww");
-	list.add("w");
-	list.add("s");
-	list.add("ADFq");
-	list.add("a");
-	list.add("A");
-	list.add("asd");
-	list.add("asdafds");
-	list.add("adsadf");
-	list.add("asdassa");
-	list.add("asdasd");
-	list.add("adf");
-	list.add("erhgkjkljkjkkkjk");
-	list.add("jghjgh");
-	list.add("ee");
-	list.add("dsf");
+int character_array_comparator_desc(char *first_arg, char *second_arg) {
+	return compare_character_array(first_arg, second_arg, false);
+}
 
-	list.sort(character_array_comparator);
-
-	for (int i = 0; i < list.size(); i++) {
-		cout << "obj" << i << " " << list.get(i) << endl;
+int main(int argc, char *argv[]) {
+	bool ascending = true;
+	for (int i = 0; i < argc; i++) {
+		if (i == 1 && compare_character_array("--help", argv[i], false) == 0) {
+			cout << "usage: " << argv[0]
+					<< " [ASC|DESC (optional)] < input > output" << endl;
+			return 0;
+		}
+		if (i == 1) {
+			if (compare_character_array("ASC", argv[i], false) == 0) {
+				ascending = true;
+			} else if (compare_character_array("DESC", argv[i], false) == 0) {
+				ascending = false;
+			} else {
+				cout << "Bad usage, for help: " << argv[0] << " --help" << endl;
+				return 0;
+			}
+			break;
+		}
 	}
 
-	cout << compare_character_array("1", "2") << endl;
-	cout << compare_character_array("asc", "f") << endl;
-	cout << compare_character_array("fsd", "as") << endl;
-	cout << compare_character_array("2", "1") << endl;
-	cout << compare_character_array("2521", "2") << endl;
+	List<char*> list;
+	string str;
+	while (getline(cin, str)) {
+		char *buffer = new char[str.length() + 1];
+		strcpy(buffer, str.c_str());
+		list.add(buffer);
+	}
+
+	list.sort(
+			ascending ?
+					character_array_comparator_asc :
+					character_array_comparator_desc);
+
+	for (int i = 0; i < list.size(); i++) {
+		cout << list.get(i) << endl;
+	}
 
 	return 0;
 }

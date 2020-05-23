@@ -41,7 +41,7 @@ int character_array_comparator_desc(char *first_arg, char *second_arg) {
 int main(int argc, char *argv[]) {
 	bool ascending = true;
 	int first_line = 0;
-	int last_line = 2147483647; //max value
+	int last_line = -1;
 	for (int i = 1; i < argc; i++) {
 		if (i == 1 && compare_character_array("--help", argv[i], false) == 0) {
 			cout << "usage: " << argv[0]
@@ -97,7 +97,8 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	if (last_line < first_line) {
+	if (last_line != -1
+			&& (last_line < first_line || last_line == first_line)) {
 		cout << "WARNING:	first row number must be least than last line number!"
 				<< endl;
 		return 0;
@@ -107,12 +108,14 @@ int main(int argc, char *argv[]) {
 	string str;
 	int line_count = 1;
 
+	//TODO: Refactor and do clean code
 	while (getline(cin, str)) {
-		if (line_count >= first_line && line_count <= last_line) {
+		if (line_count >= first_line
+				&& (last_line == -1 || line_count <= last_line)) {
 			char *buffer = new char[str.length() + 1];
 			strcpy(buffer, str.c_str());
 			list.add(buffer);
-		} else if (line_count == last_line + 1) {
+		} else if (last_line != -1 && line_count == last_line + 1) {
 			list.sort(
 					ascending ?
 							character_array_comparator_asc :
@@ -127,6 +130,17 @@ int main(int argc, char *argv[]) {
 		}
 		line_count++;
 
+	}
+
+	if (last_line == -1) {
+		list.sort(
+				ascending ?
+						character_array_comparator_asc :
+						character_array_comparator_desc);
+
+		for (int i = 0; i < list.size(); i++) {
+			cout << list.get(i) << endl;
+		}
 	}
 
 	return 0;

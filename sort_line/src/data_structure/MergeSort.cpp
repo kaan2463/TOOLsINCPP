@@ -56,6 +56,7 @@ int default_comparator(T first_arg, T second_arg) {
 	}
 }
 
+//I have just felt in love c++ callback functions! :)
 template<typename T>
 T* MergeSort::sort(T *array, int sz, int (*comparator)(T, T)) {
 

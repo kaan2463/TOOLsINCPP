@@ -3,7 +3,7 @@ make install
 echo sorter is moved to /usr/local/bin
 mv sorter /usr/local/bin
 echo allowing permission!
-chmod a+x /usr/local/bin/sorter/sorter
+chmod a+x /usr/local/bin/sorter
 #add path -not work
 #export PATH=$PATH:/usr/local/bin/sorter
 #delete path
